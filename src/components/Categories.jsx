@@ -36,11 +36,6 @@ function CategoryThumbs() {
   });
   useEffect(() => {
     const getData = async () => {
-      // const base = process.env.REACT_APP_BASE_URL;
-      //
-      // console.log(process.env.NODE_ENV);
-      //
-      // console.log(base);
       const { data } = await axios.get(process.env.REACT_APP_BASE_URL);
       setCategories(data);
     };
