@@ -1,0 +1,284 @@
+header {
+  width: 100%;
+}
+
+body {
+  background-color: #e9ece1;
+}
+
+.navbar {
+  padding: 10px 100px;
+}
+
+.sticky-top {
+  position: sticky;
+  top: 0;
+  width: 100%;
+}
+
+.footer {
+  bottom: 0;
+  background-color: #343a40;
+  color: rgba(255, 255, 255, .5);
+  justify-content: center;
+}
+
+.footerContent {
+  margin: 20px 0;
+  padding: 5px;
+}
+
+.form {
+  border: 2px solid #343a40;
+  border-radius: 7px;
+  margin: 15px;
+  padding: 25px;
+}
+
+.carouselImg {
+  min-height: max-content;
+}
+
+.carousel-indicators li {
+  background-color: black;
+}
+
+.carousel-control-next-icon {
+  background-image: url("./next.png");
+}
+
+.carousel-control-prev-icon {
+  background-image: url("./prev.png");
+}
+
+.card a {
+  color: inherit;
+}
+
+.pay-icons svg {
+  margin: 5px 5px;
+}
+
+.prodBtns button {
+  margin: 0 5px;
+}
+
+.pay-icons {
+  width: 55%;
+}
+
+.pay-icons div {
+  border-radius: .2em;
+  border: 1px solid #343a40;
+  padding: 5px;
+  width: fit-content;
+}
+
+.pay-icons small {
+  margin: 0 5px;
+}
+
+.productImg {
+  float: right;
+  height: 100%;
+  width: 85%;
+}
+
+.bgLight {
+  background-color: #e9ecef;
+}
+
+.mb-L {
+  margin-bottom: 17rem !important;
+}
+
+.bA {
+  font-weight: bold;
+  color: inherit;
+  text-decoration: none;
+}
+
+#prodImgBig {
+  border: 1px solid black;
+  width: 100%;
+  height: 80%;
+  position: relative;
+}
+
+.thumbs {
+  border: 1px solid black;
+  width: 100%;
+  height: 20%;
+}
+
+.catCard {
+  height: inherit;
+  min-height: 40vh;
+}
+
+.card-img {
+  height: inherit;
+}
+
+.jumbo {
+  margin: 0 -30px;
+  padding: 4rem;
+}
+
+.w-fitC {
+  width: fit-content;
+}
+
+.catCard a {
+  height: inherit;
+}
+
+.thumbs img {
+  height: inherit;
+  width: 100%;
+}
+
+.thumbs div {
+  width: 33%;
+}
+
+.btn-a {
+  color: white !important;
+}
+
+.pl-3-5 {
+  padding-left: 1.2rem !important;
+}
+
+.l-border {
+  border: 1px solid #dddddd;
+}
+
+.filoptions {
+  border: none;
+  padding: 15px 15px 0;
+}
+
+.pTop {
+  padding-top: 15px;
+}
+
+.center {
+  margin: 0 auto;
+}
+
+small>a {
+  color: inherit;
+}
+
+small>a:hover {
+  text-decoration: none;
+  color: black;
+}
+
+#userImg {
+  max-width: 300px;
+  max-height: 300px;
+  float: right;
+}
+
+@media (max-width: 992px) {
+  #userImg {
+    float: none;
+  }
+
+  #profilePic {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+#footer-icons {
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+#footer-icons a {
+  color: inherit;
+  margin: 0 10px;
+}
+
+#footer-icons a:hover {
+  color: rgba(255, 255, 255, .7);
+}
+
+#searchBox {
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, .7);
+  background-color: inherit;
+  border-radius: 0;
+}
+
+#searchBox:focus {
+  color: #343a40;
+  background-color: #f7f7f7;
+  box-shadow: none;
+  border: none;
+  border-radius: .2em;
+}
+
+#productListing>button, #productListing>h2, #productListing>h5, #productListing>div, #productListing>small, #productListing>label {
+  margin: 0 5px;
+  padding: 15px;
+}
+
+#productListing>select {
+  margin-left: 20px;
+  width: 30%;
+}
+
+@media screen and (max-width: 992px) {
+  .productImg {
+    float: none;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  #productListing {
+    margin: 10px auto;
+    width: 100%;
+  }
+}
+
+#loginForm {
+  margin: 0 auto;
+  width: fit-content
+}
+
+#contactForm {
+  margin: 0 auto;
+  width: fit-content;
+}
+
+#loginForm>div {
+  width: fit-content;
+  margin: 0 auto;
+}
+
+#loginForm>input {
+  margin: 5px;
+}
+
+#registerForm {
+  max-width: 60%;
+  margin: 0 auto;
+}
+
+#registerForm>div {
+  width: inherit;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+#brandLogo {
+  width: 140px;
+}
+
+li>div {
+  height: 100%;
+}
