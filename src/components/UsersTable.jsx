@@ -44,6 +44,7 @@ function UsersTable() {
               onClick={() => {
                 getData();
                 document.querySelector("#user_id").value = "";
+                setReset(false);
               }}
             >
               Reset

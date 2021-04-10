@@ -44,6 +44,7 @@ function OrdersTable() {
               onClick={() => {
                 getData();
                 document.querySelector("#order_id").value = "";
+                setReset(false);
               }}
             >
               Reset
