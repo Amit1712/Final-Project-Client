@@ -1,38 +1,169 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import ItemsList from "./List";
-import { Container, Row, Col, Form, Carousel } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Carousel,
+  Button,
+  Overlay,
+  Tooltip,
+} from "react-bootstrap";
 import axios from "axios";
+
+function Sidebar(props) {
+  const [showFilter, setShowFilter] = useState(false);
+  const [showSort, setShowSort] = useState(false);
+  const [toolTip, setTooltip] = useState("");
+  const targetFilter = useRef(null);
+  const targetSort = useRef(null);
+  const showFilterTooltip = () => {
+    setShowFilter(true);
+    setTimeout(() => {
+      setShowFilter(false);
+    }, 1000);
+  };
+  const showSortTooltip = () => {
+    setShowSort(true);
+    setTimeout(() => {
+      setShowSort(false);
+    }, 1000);
+  };
+
+  return (
+    <Form
+      className={`pt-5 p-4 pb-5 sidebar-menu${
+        props.isMenuOpen === true ? " open" : ""
+      }`}
+    >
+      <Form.Group>
+        <Button
+          size="sm"
+          variant="outline-dark"
+          className="float-right"
+          onClick={props.onMenuToggle}
+          ref={targetFilter}
+        >
+          Hide Filter Menu
+        </Button>
+        <h5>Filter Options</h5>
+      </Form.Group>
+      <Form.Group>
+        {[
+          "Diamond",
+          "Gold",
+          "Silver",
+          "Bronze",
+          "White-Gold",
+          "Platinum",
+          "Titanium",
+          "Copper",
+          "Gemstone",
+        ].map((mat, idx) => {
+          return (
+            <Form.Row key={idx} className="p-1">
+              <Form.Check
+                className="mb-2"
+                id={mat}
+                value={mat}
+                onChange={(e) => {
+                  props.handleChange(e);
+                  e.target.checked
+                    ? setTooltip("Added")
+                    : setTooltip("Removed");
+                  showFilterTooltip();
+                }}
+              />
+              <Form.Label htmlFor={mat}>{mat}</Form.Label>
+              <Overlay
+                target={targetFilter.current}
+                show={showFilter}
+                placement="bottom"
+              >
+                <Tooltip id="filterTooltip">{toolTip} filter!</Tooltip>
+              </Overlay>
+            </Form.Row>
+          );
+        })}
+      </Form.Group>
+      {props.whoChecked.length > 0 && (
+        <Button
+          size="sm"
+          variant="outline-dark"
+          className="float-right mb-2"
+          onClick={() => {
+            props.clearFilters();
+            setTooltip("Cleared");
+            showFilterTooltip();
+          }}
+        >
+          Clear all Filters
+        </Button>
+      )}
+      <Form.Label>Sort Products</Form.Label>
+      <Form.Control
+        ref={targetSort}
+        as="select"
+        custom
+        onChange={(e) => {
+          props.handleSort(e);
+          showSortTooltip();
+        }}
+      >
+        <option value="">Filter By...</option>
+        <option value="-">Price: Low to Highest</option>
+        <option value="+">Price: High to Lowest</option>
+      </Form.Control>
+      <Overlay
+        target={targetSort.current}
+        show={showSort}
+        placement="bottom-start"
+      >
+        <Tooltip id="sortTooltip">Sorted!</Tooltip>
+      </Overlay>
+    </Form>
+  );
+}
 
 function CategoryPage() {
   let { id } = useParams();
   const [category, setCategory] = useState({});
   const [products, setProducts] = useState([]);
   const [whoChecked, setWhoChecked] = useState([]);
+  const [isMenuOpen, toggleMenu] = useState(false);
   const [, updateState] = useState();
   const forceUpdate = useCallback(() => updateState({}), []);
+
+  const getData = async () => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_BASE_URL}/cat/${id}`
+    );
+    setCategory(data);
+    const res = await axios.get(
+      `${process.env.REACT_APP_BASE_URL}/product/cid/${id}`
+    );
+    setProducts(res.data);
+  };
+
   useEffect(() => {
-    const getData = async () => {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/cat/${id}`
-      );
-      setCategory(data);
-      const res = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/product/cid/${id}`
-      );
-      setProducts(res.data);
-    };
     getData();
   }, []);
 
   const handleSort = (event) => {
     const { value } = event.target;
-    debugger;
     const sortedProducts = products.sort((a, b) =>
       value === "-" ? a.price - b.price : b.price - a.price
     );
     setProducts(sortedProducts);
     forceUpdate();
+  };
+  const clearFilters = () => {
+    const arr = Array.from(document.querySelectorAll("input[type=checkbox]"));
+    arr.forEach((el) => (el.checked = false));
+    getData();
+    setWhoChecked([]);
   };
 
   const handleChange = async (event) => {
@@ -41,11 +172,6 @@ function CategoryPage() {
       const { data } = await axios.get(
         `${process.env.REACT_APP_BASE_URL}/product/${id}/${value}`
       );
-      if (data.length <= 0) {
-        //when specific material does not have any products related to it
-        //fix client side when this occurs
-        console.log("sorry got nothing");
-      }
       if (whoChecked.length === 0) {
         setProducts(data);
       } else {
@@ -75,95 +201,31 @@ function CategoryPage() {
 
   return (
     <Container fluid>
+      <Sidebar
+        handleChange={handleChange}
+        handleSort={handleSort}
+        onMenuToggle={toggleMenu}
+        isMenuOpen={isMenuOpen}
+        clearFilters={clearFilters}
+        whoChecked={whoChecked}
+      />
       <Row className="p-4">
         <h2 className="m-auto">{category.name}</h2>
       </Row>
+      <Row className="p-3">
+        <Button
+          className="m-auto"
+          variant="dark"
+          onClick={() => {
+            toggleMenu((isOpen) => !isOpen);
+          }}
+        >
+          Show Filter Menu
+        </Button>
+      </Row>
       <Row>
-        <Col sm={4}>
-          <Form className="form">
-            <Form.Label>Filter Options</Form.Label>
-            <Form.Group className="mb-auto">
-              <Form.Label htmlFor="priceRange">
-                Price Range (19.99$ - 99999.99$)
-              </Form.Label>
-              <Form.Control type="range" id="priceRange" />
-              <Form.Check
-                label="Diamond"
-                className="mb-2"
-                value="Diamond"
-                onChange={handleChange}
-              />
-              <Form.Check
-                label="Gold"
-                className="mb-2"
-                value="Gold"
-                onChange={handleChange}
-              />
-              <Form.Check
-                label="Silver"
-                className="mb-2"
-                value="Silver"
-                onChange={handleChange}
-              />
-              <Form.Check
-                label="Bronze"
-                className="mb-2"
-                value="Bronze"
-                onChange={handleChange}
-              />
-              <Form.Check
-                label="White Gold"
-                className="mb-2"
-                value="White-Gold"
-                onChange={handleChange}
-              />
-              <Form.Check
-                label="Platinum"
-                className="mb-2"
-                value="Platinum"
-                onChange={handleChange}
-              />
-              <Form.Check
-                label="Titanium"
-                className="mb-2"
-                value="Titanium"
-                onChange={handleChange}
-              />
-              <Form.Check
-                label="Copper"
-                className="mb-2"
-                value="Copper"
-                onChange={handleChange}
-              />
-              <Form.Check
-                label="Gemstones"
-                className="mb-2"
-                value="Gemstone"
-                onChange={handleChange}
-              />
-            </Form.Group>
-          </Form>
-          <Form className="form">
-            <Form.Group className="mb-auto">
-              <Form.Label>Shipping Methods</Form.Label>
-              <Form.Check type="radio" label="Express" className="mb-2" />
-              <Form.Check type="radio" label="UPS" className="mb-2" />
-              <Form.Check type="radio" label="DHL" className="mb-2" />
-              <Form.Check type="radio" label="Regular" className="mb-2" />
-              <Form.Check type="radio" label="Free" className="mb-2" />
-            </Form.Group>
-          </Form>
-          <div className="form filoptions">
-            <Form.Label>Sort Products</Form.Label>
-            <Form.Control as="select" custom onChange={handleSort}>
-              <option value="">Filter By...</option>
-              <option value="-">Price: Low to Highest</option>
-              <option value="+">Price: High to Lowest</option>
-            </Form.Control>
-          </div>
-        </Col>
-        <Col lg={8}>
-          <Carousel className="salesCarousel pTop">
+        <Col lg={10} className="m-auto">
+          <Carousel className="">
             <Carousel.Item className="carouselImg" interval={2000}>
               <img
                 className="d-block w-100"

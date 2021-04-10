@@ -33,6 +33,12 @@ function AdminForms() {
     errors: delCatErrors,
   } = useForm();
 
+  const {
+    register: updateCategory,
+    handleSubmit: handleCatUpdate,
+    errors: updateCatErrors,
+  } = useForm();
+
   const deleteCategory = async (cat) => {
     try {
       const { data } = await axios.delete(
@@ -41,6 +47,23 @@ function AdminForms() {
       alert(data);
     } catch (err) {
       alert("No category found to be removed, check the ID please");
+    }
+  };
+
+  const onCatUpdate = async (cat) => {
+    for (const [key, value] of Object.entries(cat)) {
+      if (!value || value.length <= 0) {
+        delete cat[key];
+      }
+    }
+    try {
+      const { data } = await axios.put(
+        `${process.env.REACT_APP_BASE_URL}/cat/${cat.id}`,
+        cat
+      );
+      alert(data);
+    } catch (err) {
+      alert("No category found to be updated, check the ID please");
     }
   };
 
@@ -342,6 +365,47 @@ function AdminForms() {
             </Button>
           </div>
         </Form>
+        {/*Update Category Forn */}
+        <Form className="form" onSubmit={handleCatUpdate(onCatUpdate)}>
+          <h4>Update Category</h4>
+          <Form.Group>
+            <Form.Label htmlFor="catName">Category ID</Form.Label>
+            <Form.Control
+              type="text"
+              id="catID"
+              ref={updateCategory({ required: true })}
+              name="id"
+            />
+            {updateCatErrors.id && (
+              <span className="invalid-feedback d-block ml-2">
+                This field is required
+              </span>
+            )}
+          </Form.Group>
+          <Form.Group>
+            <Form.Label htmlFor="src">Category Name</Form.Label>
+            <Form.Control
+              type="text"
+              id="catName"
+              ref={updateCategory}
+              name="name"
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label htmlFor="src">Category Image</Form.Label>
+            <Form.Control
+              type="text"
+              id="catSrc"
+              ref={updateCategory}
+              name="src"
+            />
+          </Form.Group>
+          <div className="text-center">
+            <Button variant="dark" className="p-2" type="submit">
+              Update Category
+            </Button>
+          </div>
+        </Form>
       </Col>
       {/*Delete Product Form*/}
       <Col lg={6}>
@@ -367,6 +431,7 @@ function AdminForms() {
             </Button>
           </div>
         </Form>
+        {/*Delete Category Form*/}
         <Form className="form" onSubmit={handleCatDelete(deleteCategory)}>
           <h4>Delete Category</h4>
           <Form.Group>

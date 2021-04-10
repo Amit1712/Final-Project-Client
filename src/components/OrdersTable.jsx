@@ -1,30 +1,59 @@
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Table, Col, Form, Button } from "react-bootstrap";
 import axios from "axios";
 
 function OrdersTable() {
   const [orders, setOrders] = useState([]);
+  const { register, handleSubmit, errors } = useForm();
+  const [showReset, setReset] = useState(false);
+
+  const getData = async () => {
+    const { data } = await axios.get(`${process.env.REACT_APP_BASE_URL}/order`);
+    setOrders(data);
+  };
+
+  const onSubmit = (id) => {
+    const orderToShow = orders.filter((order) => order._id.includes(id.id));
+    setOrders(orderToShow);
+    setReset(true);
+  };
+
   useEffect(() => {
-    const getData = async () => {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/order`
-      );
-      setOrders(data);
-    };
     getData();
   }, []);
   return (
     <Col>
-      <Form inline>
+      <Form inline onSubmit={handleSubmit(onSubmit)}>
         <div className="m-auto p-3">
           <Form.Control
+            id="order_id"
+            ref={register({ required: true })}
             type="text"
+            name="id"
             placeholder="Enter order ID"
             className="mr-sm-1"
           />
-          <Button size="sm" variant="outline-dark">
+          <Button size="sm" variant="outline-dark" type="submit">
             Search
           </Button>
+          {showReset && (
+            <Button
+              size="sm"
+              variant="outline-dark ml-2"
+              onClick={() => {
+                getData();
+                document.querySelector("#order_id").value = "";
+              }}
+            >
+              Reset
+            </Button>
+          )}
+          {errors.id && (
+            <span className="invalid-feedback d-block ml-2">
+              This field is required
+            </span>
+          )}
         </div>
       </Form>
       <Table responsive="sm" hover bordered>
@@ -42,7 +71,7 @@ function OrdersTable() {
         <tbody>
           {orders.map((order, idx) => {
             return (
-              <tr>
+              <tr key={idx}>
                 <td>{order._id.substring(15)}</td>
                 <td>{order.time}</td>
                 <td>

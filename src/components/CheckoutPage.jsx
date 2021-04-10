@@ -9,7 +9,7 @@ import {
   MDBTabPane,
   MDBTabContent,
 } from "mdbreact";
-import { Container, Col, Row, Card, Button } from "react-bootstrap";
+import { Container, Col, Row, Card, Button, Form } from "react-bootstrap";
 import { PayPalButton } from "react-paypal-button-v2";
 import axios from "axios";
 
@@ -28,6 +28,8 @@ function CheckoutPage() {
     quantity: 1,
   });
 
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState({});
   const [address, setAddress] = useState("");
   const [toRegister, setRegister] = useState(false);
   const [activePill, setActivePill] = useState("1");
@@ -37,17 +39,28 @@ function CheckoutPage() {
   const { register, handleSubmit, errors } = useForm();
   const { register: addressRef, errors: addrErrors } = useForm();
 
+  useEffect(() => {
+    if (store.isLoggedIn) {
+      setActivePill("3");
+      setAddress(store.user.address);
+    }
+  }, []);
   const isCountry = (country: string) => country !== "Country...";
-
+  let type = `${toRegister ? "2" : "3"}`;
   const onSubmit = async (user) => {
-    let type = `${toRegister ? "add" : "guest"}`;
-    const { data } = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}/user/${type}`,
-      user
-    );
-    updateStore({ ...store, user: { ...data.user } });
-    setActivePill("3");
-    setAddress(user.address);
+    try {
+      let userType = `${toRegister ? "signup" : "guest"}`;
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/user/${userType}`,
+        user
+      );
+      updateStore({ ...store, user: { ...data.user } });
+      setActivePill("3");
+      setAddress(user.address);
+    } catch (err) {
+      setIsError(true);
+      setError(err.response);
+    }
   };
 
   const handleCheckout = () => {
@@ -70,7 +83,7 @@ function CheckoutPage() {
     onCheckout();
   }, [order]);
 
-  const commitCheckout = () => {
+  const commitCheckout = async () => {
     let shipMet = "";
     document.querySelector('input[name="shipping"]:checked')
       ? (shipMet = document.querySelector('input[name="shipping"]:checked')
@@ -85,6 +98,7 @@ function CheckoutPage() {
       shippingMethod: shipMet,
       address: address,
     });
+    await axios.post(`${process.env.REACT_APP_BASE_URL}/contact/order`, store);
   };
 
   useEffect(() => {
@@ -101,7 +115,7 @@ function CheckoutPage() {
     }
     setActivePill(id);
   }
-  const style = {
+  const PayPalBtnStyle = {
     color: "black",
     tagline: false,
   };
@@ -264,6 +278,11 @@ function CheckoutPage() {
                                   This field is required
                                 </span>
                               )}
+                              {isError && (
+                                <span className="invalid-feedback d-block ml-2">
+                                  {`Invalid email address - ${error.data}`}
+                                </span>
+                              )}
                             </div>
                             <div className="mb-4">
                               <label htmlFor="address">Address</label>
@@ -336,16 +355,16 @@ function CheckoutPage() {
                             <Col>
                               <label htmlFor="pass">Password</label>
                               <input
-                                type="text"
+                                type="password"
                                 className="form-control"
                                 id="pass"
                                 name="password"
                                 placeholder="Enter your password"
-                                ref={register({ required: true })}
+                                ref={register({ required: true, minLength: 8 })}
                               />
                               {errors.password && (
                                 <span className="invalid-feedback d-block">
-                                  This field is required
+                                  This field is required - minimum length of 8
                                 </span>
                               )}
                             </Col>
@@ -416,6 +435,12 @@ function CheckoutPage() {
                         >
                           Next step
                         </MDBBtn>
+                        <input
+                          type="hidden"
+                          ref={register}
+                          name="type"
+                          value={type}
+                        />
                       </form>
                     </MDBTabPane>
                     {/*Tab 3 - Shipping info*/}
@@ -475,9 +500,6 @@ function CheckoutPage() {
                                   className="form-check-input filled-in"
                                   id="checkaddr"
                                   name="address"
-                                  onChange={() => {
-                                    setIsChecked((prev) => !prev);
-                                  }}
                                 />
                                 <label
                                   className="form-check-label"
@@ -487,7 +509,7 @@ function CheckoutPage() {
                                 </label>
                                 {isChecked && (
                                   <span className="invalid-feedback d-block">
-                                    This field is required
+                                    This field is required - or the form below
                                   </span>
                                 )}
                               </div>
@@ -597,12 +619,7 @@ function CheckoutPage() {
               <Col lg={4} className="mb-4">
                 <Card className="mb-2">
                   <Card.Body>
-                    <h4
-                      className="mb-4 mt-1 h5 text-center font-weight-bold"
-                      onClick={() => {
-                        console.log(order);
-                      }}
-                    >
+                    <h4 className="mb-4 mt-1 h5 text-center font-weight-bold">
                       Summary
                     </h4>
                     <hr />
@@ -633,6 +650,7 @@ function CheckoutPage() {
                         <hr />
                       </>
                     )}
+
                     <Row>
                       <Col sm={8}>
                         <strong>VAT</strong>
@@ -645,12 +663,38 @@ function CheckoutPage() {
                     </Row>
                     <Row>
                       <Col sm={8}>
+                        <strong>Coupon:</strong> FS2021 -15%
+                      </Col>
+                      <Col sm={4}>
+                        <strong>-84.2$</strong>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col sm={8}>
                         <strong>Total</strong>
                       </Col>
                       <Col sm={4}>
                         <strong>{finalPrice > 0 ? finalPrice : 0} $</strong>
                       </Col>
                     </Row>
+                  </Card.Body>
+                </Card>
+                <Card className="mb-3">
+                  <Card.Body>
+                    <Form.Label htmlFor="coupon">
+                      Voucher/Coupon code
+                    </Form.Label>
+                    <Form inline className="w-100">
+                      <Form.Control
+                        type="text"
+                        name="coupon"
+                        id="coupon"
+                        placeholder="Enter coupon code"
+                      />
+                      <Button variant="dark" className="ml-1">
+                        Apply code
+                      </Button>
+                    </Form>
                   </Card.Body>
                 </Card>
                 {isCheckout && (
@@ -662,7 +706,7 @@ function CheckoutPage() {
                     >
                       Checkout
                     </Button>
-                    <PayPalButton style={style} />
+                    <PayPalButton style={PayPalBtnStyle} />
                   </div>
                 )}
               </Col>

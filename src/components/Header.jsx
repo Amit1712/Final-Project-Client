@@ -17,6 +17,15 @@ function Header() {
   useEffect(() => {
     const getData = async () => {
       const { data } = await axios.get(process.env.REACT_APP_BASE_URL);
+      data.sort((a, b) => {
+        if (a.gen < b.gen) {
+          return 1;
+        }
+        if (a.gen > b.gen) {
+          return -1;
+        }
+        return 0;
+      });
       setCategories(data);
     };
     getData();
@@ -50,10 +59,11 @@ function Header() {
               <Nav.Link href="/blog">Blog</Nav.Link>
               <Form inline>
                 <Form.Control
+                  autoComplete="off"
                   id="searchBox"
                   value={keyword}
                   size="sm"
-                  type="text"
+                  type="search"
                   placeholder="Search"
                   className="mr-sm-1"
                   onChange={(e) => {
@@ -71,8 +81,14 @@ function Header() {
             </Nav>
             <Nav>
               <Nav.Link href="/about">About Us</Nav.Link>
-              <Nav.Link href="/signup">Sign Up</Nav.Link>
-              <Nav.Link href="/login">Login</Nav.Link>
+              {store.isLoggedIn ? (
+                <Nav.Link href="/profile">My Profile</Nav.Link>
+              ) : (
+                <>
+                  <Nav.Link href="/signup">Sign Up</Nav.Link>
+                  <Nav.Link href="/login">Login</Nav.Link>
+                </>
+              )}
             </Nav>
             <Nav>
               <Nav.Link href="/cart">

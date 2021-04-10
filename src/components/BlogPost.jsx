@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import axios from "axios";
@@ -6,13 +6,16 @@ import axios from "axios";
 function BlogPost() {
   let { id } = useParams();
   const [post, setPost] = useState({});
-  const getData = async () => {
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}/blog/post/${id}`
-    );
-    setPost(data);
-  };
-  window.onload = getData;
+
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/blog/post/${id}`
+      );
+      setPost(data);
+    };
+    getData();
+  }, []);
 
   return (
     <Container fluid>

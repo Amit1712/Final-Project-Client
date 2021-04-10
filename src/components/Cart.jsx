@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { StoreContext, saveToStorage } from "./StoreContext";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import CartItem from "./CartItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -14,6 +14,25 @@ function Cart() {
   useEffect(() => {
     saveToStorage(store.cart.cartItems);
   }, [store]);
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+  ];
+  const today = new Date();
+  const nextweek = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() + 7
+  );
+  const twoweeks = new Date(
+    nextweek.getFullYear(),
+    nextweek.getMonth(),
+    nextweek.getDate() + 14
+  );
 
   const isEmpty = () => {
     if (store.cart.itemsCount === 0) {
@@ -78,7 +97,16 @@ function Cart() {
             <Card.Body>
               <h5 className="mb-4">Expected shipping delivery</h5>
 
-              <p className="mb-0">Thu., 12.03 - Mon., 16.03</p>
+              <p className="mb-0">
+                Expect delivery between:
+                <span className="small">
+                  {` ${days[nextweek.getDay()]}, ${nextweek.getDate()}.${
+                    nextweek.getMonth() + 1
+                  } - ${days[twoweeks.getDay()]}, ${twoweeks.getDate()}.${
+                    twoweeks.getMonth() + 1
+                  }`}
+                </span>
+              </p>
             </Card.Body>
           </Card>
         </Col>
@@ -121,7 +149,6 @@ function Cart() {
               </Button>
             </Card.Body>
           </Card>
-
           <Card className="mb-3">
             <Card.Body>
               <h5 className="mb-4">We accept</h5>

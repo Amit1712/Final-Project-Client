@@ -23,6 +23,7 @@ import AdminPage from "./AdminPage";
 import Profile from "./Profile";
 import Search from "./SearchResults";
 import ContactUs from "./Contact";
+import ScrollArrow from "./ScrollArrow";
 import { Container, Row } from "react-bootstrap";
 
 function ScrollToTop(props) {
@@ -37,6 +38,9 @@ function App() {
   return (
     <Container fluid>
       <Store>
+        <Row className="text-right">
+          <ScrollArrow />
+        </Row>
         <section className="sticky-top">
           <Header />
         </section>

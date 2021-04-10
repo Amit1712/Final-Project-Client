@@ -1,6 +1,14 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { Row, Col, Form, Button, Container } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Form,
+  Button,
+  Container,
+  Overlay,
+  Tooltip,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
@@ -57,6 +65,8 @@ function ProductPage() {
   const [prod, setProd] = useState({});
   const [products, setProducts] = useState([]);
   const [store, updateStore] = useContext(StoreContext);
+  const [show, setShow] = useState(false);
+  const target = useRef(null);
 
   const onAddToCart = (id) => {
     updateStore({
@@ -69,6 +79,10 @@ function ProductPage() {
     });
     store.cart.cartItems.push(prod);
     saveToStorage(store.cart.cartItems);
+    setShow(true);
+    setTimeout(() => {
+      setShow(false);
+    }, 2000);
   };
 
   useEffect(() => {
@@ -129,6 +143,7 @@ function ProductPage() {
             <div className="prodBtns">
               <Button variant="dark">Buy Now</Button>
               <Button
+                ref={target}
                 variant="dark"
                 onClick={() => {
                   onAddToCart(prod);
@@ -136,6 +151,9 @@ function ProductPage() {
               >
                 Add To Cart
               </Button>
+              <Overlay target={target.current} show={show} placement="right">
+                <Tooltip id="cartTooltip">Added!</Tooltip>
+              </Overlay>
             </div>
             <div className="pay-icons">
               <div>

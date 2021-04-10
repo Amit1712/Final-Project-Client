@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import { useContext, useState, useRef } from "react";
 import { StoreContext, saveToStorage } from "./StoreContext";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Overlay, Tooltip } from "react-bootstrap";
 //FA
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -9,6 +9,9 @@ import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 library.add(faShoppingCart);
 
 function ProductThumbnail({ product }) {
+  const [show, setShow] = useState(false);
+  const target = useRef(null);
+
   const [store, updateStore] = useContext(StoreContext);
   const onAddToCart = () => {
     updateStore({
@@ -20,6 +23,10 @@ function ProductThumbnail({ product }) {
       },
     });
     store.cart.cartItems.push(product);
+    setShow(true);
+    setTimeout(() => {
+      setShow(false);
+    }, 2000);
   };
 
   return (
@@ -39,6 +46,7 @@ function ProductThumbnail({ product }) {
           <span>⭐⭐⭐⭐⭐</span>
 
           <Button
+            ref={target}
             className="ml-4"
             variant="dark"
             onClick={() => {
@@ -48,6 +56,9 @@ function ProductThumbnail({ product }) {
           >
             Add To <FontAwesomeIcon icon="shopping-cart" />
           </Button>
+          <Overlay target={target.current} show={show} placement="top">
+            <Tooltip id="cartTooltip">Added to Cart!</Tooltip>
+          </Overlay>
         </div>
       </Card.Body>
     </Card>

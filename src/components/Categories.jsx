@@ -28,12 +28,6 @@ function Women(props) {
 }
 
 function CategoryThumbs() {
-  const men = [],
-    women = [];
-  const [categories, setCategories] = useState([]);
-  categories.forEach((cat) => {
-    cat.gen === "M" ? men.push(cat) : women.push(cat);
-  });
   useEffect(() => {
     const getData = async () => {
       const { data } = await axios.get(process.env.REACT_APP_BASE_URL);
@@ -42,13 +36,20 @@ function CategoryThumbs() {
     getData();
   }, []);
 
+  const men = [],
+    women = [];
+  const [categories, setCategories] = useState([]);
+  categories.forEach((cat) => {
+    cat.gen === "M" ? men.push(cat) : women.push(cat);
+  });
+
   return (
     <CardDeck>
       <Col lg={12} className="p-3">
-        <Men items={men} />
+        <Women items={women} />
       </Col>
       <Col lg={12} className="p-3">
-        <Women items={women} />
+        <Men items={men} />
       </Col>
     </CardDeck>
   );

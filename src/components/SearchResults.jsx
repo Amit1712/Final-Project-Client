@@ -21,7 +21,7 @@ function SearchResults() {
   return (
     <Container fluid>
       <Row className="p-3">
-        <h2 className="mb-2">Search Results:</h2>
+        <h2 className="mb-2">Search Results for: '{keyword}'</h2>
       </Row>
       <Row className="p-3 l-border">
         {products.length !== 0 ? (

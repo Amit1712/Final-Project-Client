@@ -10,13 +10,25 @@ function Footer() {
   return (
     <footer className="footerContent">
       <div id="footer-icons">
-        <a href="https://www.twitter.com/diamondz">
+        <a
+          href="https://twitter.com/Diamond74435333"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <FontAwesomeIcon icon={["fab", "twitter"]} />
         </a>
-        <a href="https://www.instagram.com/diamondz">
+        <a
+          href="https://www.instagram.com/diamondzhelp/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <FontAwesomeIcon icon={["fab", "instagram"]} />
         </a>
-        <a href="https://www.facebook.com/diamondz">
+        <a
+          href="https://www.facebook.com/storediamondz"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <FontAwesomeIcon icon={["fab", "facebook"]} />
         </a>
         <a href="/contact">
