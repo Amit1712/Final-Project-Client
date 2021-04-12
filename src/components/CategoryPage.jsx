@@ -19,6 +19,7 @@ function Sidebar(props) {
   const [toolTip, setTooltip] = useState("");
   const targetFilter = useRef(null);
   const targetSort = useRef(null);
+
   const showFilterTooltip = () => {
     setShowFilter(true);
     setTimeout(() => {
