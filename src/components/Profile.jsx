@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Container, Row, Col, Form, Button, Table } from "react-bootstrap";
 import axios from "axios";
-import { StoreContext, saveUserDetails } from "./StoreContext";
+import { StoreContext, saveUserDetails, logOut } from "./StoreContext";
 
 function OrdersTable(props) {
   return (
@@ -84,10 +84,6 @@ function Profile() {
     };
     getOrders();
   }, []);
-  const logOut = () => {
-    window.location.replace("/");
-    sessionStorage.clear();
-  };
 
   const updateUser = async (userData) => {
     disableEdit();
@@ -105,6 +101,7 @@ function Profile() {
       newUser
     );
     saveUserDetails(data.user, store.token, true);
+    window.location.reload();
   };
 
   const enableEdit = () => {

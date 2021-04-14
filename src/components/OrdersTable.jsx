@@ -66,7 +66,8 @@ function OrdersTable() {
             <th>Quantity</th>
             <th>Address</th>
             <th>Shipping Method</th>
-            <th>user ID</th>
+            <th>User ID</th>
+            <th>Total Price</th>
           </tr>
         </thead>
         <tbody>
@@ -84,6 +85,7 @@ function OrdersTable() {
                 <td>{order.address}</td>
                 <td>{order.shippingMethod}</td>
                 <td>{order.userID.substring(15)}</td>
+                <td>{order.totalPrice}$</td>
               </tr>
             );
           })}

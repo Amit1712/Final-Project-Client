@@ -245,14 +245,14 @@ small>a:hover {
   color: rgba(255, 255, 255, .7);
 }
 
-#searchBox {
+.searchBox {
   border: none;
   border-bottom: 1px solid rgba(255, 255, 255, .7);
   background-color: inherit;
   border-radius: 0;
 }
 
-#searchBox:focus {
+.searchBox:focus {
   color: #343a40;
   background-color: #f7f7f7;
   box-shadow: none;

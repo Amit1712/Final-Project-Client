@@ -40,11 +40,15 @@ function CheckoutPage() {
   const { register: addressRef, errors: addrErrors } = useForm();
 
   useEffect(() => {
+    if (store.cart.cartItems.length === 0) {
+      window.location.replace("/cart");
+    }
     if (store.isLoggedIn) {
       setActivePill("3");
       setAddress(store.user.address);
     }
   }, []);
+
   const isCountry = (country: string) => country !== "Country...";
   let type = `${toRegister ? "2" : "3"}`;
   const onSubmit = async (user) => {
@@ -661,14 +665,14 @@ function CheckoutPage() {
                         </strong>
                       </Col>
                     </Row>
-                    <Row>
+                    {/*<Row>
                       <Col sm={8}>
                         <strong>Coupon:</strong> FS2021 -15%
                       </Col>
                       <Col sm={4}>
                         <strong>-84.2$</strong>
                       </Col>
-                    </Row>
+                    </Row>*/}
                     <Row>
                       <Col sm={8}>
                         <strong>Total</strong>
@@ -679,7 +683,7 @@ function CheckoutPage() {
                     </Row>
                   </Card.Body>
                 </Card>
-                <Card className="mb-3">
+                {/*<Card className="mb-3">
                   <Card.Body>
                     <Form.Label htmlFor="coupon">
                       Voucher/Coupon code
@@ -696,7 +700,7 @@ function CheckoutPage() {
                       </Button>
                     </Form>
                   </Card.Body>
-                </Card>
+                </Card>*/}
                 {isCheckout && (
                   <div>
                     <Button

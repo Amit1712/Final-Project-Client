@@ -39,7 +39,10 @@ export const saveUserDetails = (user, token, isLoggedIn) => {
   sessionStorage.setItem("user", JSON.stringify(user !== {} ? user : {}));
   sessionStorage.setItem("isLoggedIn", JSON.stringify(isLoggedIn));
 };
-
+export const logOut = () => {
+  window.location.replace("/");
+  sessionStorage.clear();
+};
 export const StoreContext = createContext(storeObj);
 
 const Store = ({ children }) => {

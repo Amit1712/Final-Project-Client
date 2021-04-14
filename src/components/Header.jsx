@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { StoreContext } from "./StoreContext";
+import { StoreContext, logOut } from "./StoreContext";
 //Bootstrap
 import { Row, Navbar, Nav, NavDropdown, Button, Form } from "react-bootstrap";
 //FA
@@ -13,22 +13,26 @@ library.add(faShoppingCart);
 
 function Header() {
   const [store] = useContext(StoreContext);
+  const [isAdmin, setAdmin] = useState(false);
   const [categories, setCategories] = useState([]);
+  const getData = async () => {
+    const { data } = await axios.get(process.env.REACT_APP_BASE_URL);
+    data.sort((a, b) => {
+      if (a.gen < b.gen) {
+        return 1;
+      }
+      if (a.gen > b.gen) {
+        return -1;
+      }
+      return 0;
+    });
+    setCategories(data);
+  };
   useEffect(() => {
-    const getData = async () => {
-      const { data } = await axios.get(process.env.REACT_APP_BASE_URL);
-      data.sort((a, b) => {
-        if (a.gen < b.gen) {
-          return 1;
-        }
-        if (a.gen > b.gen) {
-          return -1;
-        }
-        return 0;
-      });
-      setCategories(data);
-    };
     getData();
+    if (store.user.type === "1") {
+      setAdmin(true);
+    }
   }, []);
   const [keyword, setKeyword] = useState("");
   return (
@@ -45,7 +49,7 @@ function Header() {
             <img src={logo} alt="brand-logo" id="brandLogo" className="mb-1" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse id="responsive-navbar-nav">
+          <Navbar.Collapse id="responsive-navbar-nav" className="">
             <Nav className="mr-auto">
               <NavDropdown title="Categories" id="basic-nav-dropdown">
                 {categories.map((cat, index) => {
@@ -59,13 +63,11 @@ function Header() {
               <Nav.Link href="/blog">Blog</Nav.Link>
               <Form inline>
                 <Form.Control
-                  autoComplete="off"
-                  id="searchBox"
                   value={keyword}
                   size="sm"
                   type="search"
                   placeholder="Search"
-                  className="mr-sm-1"
+                  className="mr-sm-1 searchBox"
                   onChange={(e) => {
                     setKeyword(e.target.value);
                   }}
@@ -82,7 +84,17 @@ function Header() {
             <Nav>
               <Nav.Link href="/about">About Us</Nav.Link>
               {store.isLoggedIn ? (
-                <Nav.Link href="/profile">My Profile</Nav.Link>
+                <NavDropdown title={`Hello ${store.user.FName}`}>
+                  {isAdmin && (
+                    <NavDropdown.Item href="/admin">
+                      Admin Panel
+                    </NavDropdown.Item>
+                  )}
+                  <NavDropdown.Item href="/profile">
+                    My Profile
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={logOut}>Log out</NavDropdown.Item>
+                </NavDropdown>
               ) : (
                 <>
                   <Nav.Link href="/signup">Sign Up</Nav.Link>
